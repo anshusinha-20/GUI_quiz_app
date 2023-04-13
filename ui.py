@@ -38,12 +38,12 @@ class QuizInterface:
 
         """created the buttonTrue object"""
         self.trueImg = PhotoImage(file="images/true.png")
-        self.buttonTrue = Button(image=self.trueImg, highlightthickness=0, bd=0)
+        self.buttonTrue = Button(image=self.trueImg, highlightthickness=0, bd=0, command=self.pressTrue)
         self.buttonTrue.grid(row=3, column=1)
 
         """created the buttonFalse object"""
         self.falseImg = PhotoImage(file="images/false.png")
-        self.buttonFalse = Button(image=self.falseImg, highlightthickness=0, bd=0)
+        self.buttonFalse = Button(image=self.falseImg, highlightthickness=0, bd=0, command=self.pressFalse)
         self.buttonFalse.grid(row=3, column=2)
 
         """calling getNextQuestion method"""
@@ -53,5 +53,29 @@ class QuizInterface:
         self.window.mainloop()
 
     def getNextQuestion(self):
-        q_text = self.quiz.next_question()
-        self.canvas.itemconfig(self.questionText, text=q_text)
+        self.canvas.config(bg="white")
+
+        if self.quiz.still_has_questions():
+            self.labelScore.config(text=f"Score: {self.quiz.score}")
+            q_text = self.quiz.next_question()
+            self.canvas.itemconfig(self.questionText, text=q_text)
+        else:
+            self.canvas.itemconfig(self.questionText, text="You've reached to end of the quiz.")
+            self.buttonTrue.config(state="disabled")
+            self.buttonFalse.config(state="disabled")
+
+    def pressTrue(self):
+        is_right = self.quiz.check_answer("True")
+        self.giveFeedback(is_right)
+
+    def pressFalse(self):
+        is_right = self.quiz.check_answer("False")
+        self.giveFeedback(is_right)
+
+    def giveFeedback(self, is_right):
+        if is_right:
+            self.canvas.config(bg="green")
+        else:
+            self.canvas.config(bg="red")
+
+        self.window.after(1000, self.getNextQuestion)
