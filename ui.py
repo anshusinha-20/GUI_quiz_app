@@ -23,7 +23,7 @@ class QuizInterface:
         # label
 
         """created the labelScore object"""
-        self.labelScore = Label(text=f"Score: {0}", fg="white", bg=THEME_COLOR, font=("Arial", 15, "normal"))
+        self.labelScore = Label(text=f"Score: 0", fg="white", bg=THEME_COLOR, font=("Arial", 15, "normal"))
         self.labelScore.grid(row=1, column=2)
 
 
@@ -56,7 +56,6 @@ class QuizInterface:
         self.canvas.config(bg="white")
 
         if self.quiz.still_has_questions():
-            self.labelScore.config(text=f"Score: {self.quiz.score}")
             q_text = self.quiz.next_question()
             self.canvas.itemconfig(self.questionText, text=q_text)
         else:
@@ -74,6 +73,7 @@ class QuizInterface:
 
     def giveFeedback(self, is_right):
         if is_right:
+            self.labelScore.config(text=f"Score: {self.quiz.score}")
             self.canvas.config(bg="green")
         else:
             self.canvas.config(bg="red")
